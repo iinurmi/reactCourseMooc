@@ -51,19 +51,35 @@ class App extends React.Component {
         goodCounter: 0,
         neutralCounter: 0,
         badCounter: 0,
+        average: 0,
+        positive: 0,
       }
     }
-  }
 
+
+  }
+  totalCount = () => this.state.stats.goodCounter + this.state.stats.badCounter + this.state.stats.neutralCounter;
+  calculateAverage = () => {
+    let totalValue =  this.state.stats.goodCounter - this.state.stats.badCounter;
+    let totalCount = this.totalCount();
+
+    return totalValue / totalCount;
+  }
+  percentageOfPositiveFeedback = () => {
+    let positive =  (this.state.stats.goodCounter / this.totalCount()) * 100;
+    return positive;
+  }
 
   render() {
     const addToStats = (key) => {
       const handler = () => {
         let stats = this.state.stats;
         stats[key]++;
+        stats['average'] = this.calculateAverage();
+        stats['positive'] = this.percentageOfPositiveFeedback();
         this.setState({stats})
       }
-      console.log(this.state);
+
       return handler
     }
 
@@ -79,6 +95,8 @@ class App extends React.Component {
           <p>Hyvä: {this.state.stats['goodCounter']}</p>
           <p>Neutraali: {this.state.stats['neutralCounter']}</p>
           <p>Huono: {this.state.stats['badCounter']}</p>
+          <p>Keskiarvo: {this.state.stats['average'].toFixed(1)}</p>
+          <p>Positiivisia: {this.state.stats['positive'].toFixed(1)}%</p>
         </div>
       </div>
     )
