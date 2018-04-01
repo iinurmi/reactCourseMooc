@@ -3,17 +3,48 @@ import ReactDOM from 'react-dom'
 
 const Otsikko = (props) => {
   return (
-    [
-      <h1>{props.title}</h1>
-    ]
+    <div><h1>{props.title}</h1></div>
   )
 }
 
-/*const FeedBackButton = (props) => {
-  return [
-    <button value="{props.value}" onClick={props.handler}> {props.title} </button>
-  ]
-}*/
+const Button = ({ handler, handlerKey, name }) => {
+  return (
+    <span>
+      <button onClick={handler(handlerKey)}>{name}</button>
+    </span>
+  )
+}
+const Statistics = ({stats}) => {
+  if (stats.totalCount === 0) {
+      return (
+        <div>
+          <Otsikko title={"Statistiikka"} />
+          <p>ei yhtään palautetta annettu </p>
+        </div>
+      )
+  }
+  return (
+    <div>
+      <Otsikko title={"Statistiikka"} />
+      <table>
+      <thead></thead>
+        <tbody>
+          <Statistic name="Hyvä" value={stats['goodCounter']} />
+          <Statistic name="Neutraali" value={stats['neutralCounter']} />
+          <Statistic name="Huono" value={stats['badCounter']} />
+          <Statistic name="Keskiarvo" value={stats['average'].toFixed(1)} />
+          <Statistic name="Keskiarvo" value={stats['positive'].toFixed(1) + '%'} />
+        </tbody>
+      </table>
+    </div>
+  )
+}
+const Statistic = ({name, value}) => {
+  return (
+    <tr><td>{name}</td><td>{value}</td></tr>
+  )
+}
+
 /*const FeedBackButtons = (props) => {
   const feedBackButtons = props.buttons.map((button) =>
     <FeedBackButton value={button.value}
@@ -33,40 +64,27 @@ class App extends React.Component {
     super(props)
     this.state = {
       counter: 1,
-      buttons: [
-        {
-          title: 'Hyvä',
-          value: 'good'
-        },
-        {
-          title: 'Neutraali',
-          value: 'neutral'
-        },
-        {
-          title: 'Huono',
-          value: 'bad'
-        }
-      ],
       stats: {
         goodCounter: 0,
         neutralCounter: 0,
         badCounter: 0,
         average: 0,
         positive: 0,
+        totalCount:0,
       }
     }
 
 
   }
-  totalCount = () => this.state.stats.goodCounter + this.state.stats.badCounter + this.state.stats.neutralCounter;
+  //totalCount = () => this.state.stats.goodCounter + this.state.stats.badCounter + this.state.stats.neutralCounter;
   calculateAverage = () => {
     let totalValue =  this.state.stats.goodCounter - this.state.stats.badCounter;
-    let totalCount = this.totalCount();
+    let totalCount = this.state.stats.totalCount;
 
     return totalValue / totalCount;
   }
   percentageOfPositiveFeedback = () => {
-    let positive =  (this.state.stats.goodCounter / this.totalCount()) * 100;
+    let positive =  (this.state.stats.goodCounter / this.state.stats.totalCount) * 100;
     return positive;
   }
 
@@ -75,6 +93,7 @@ class App extends React.Component {
       const handler = () => {
         let stats = this.state.stats;
         stats[key]++;
+        stats['totalCount']++;
         stats['average'] = this.calculateAverage();
         stats['positive'] = this.percentageOfPositiveFeedback();
         this.setState({stats})
@@ -87,17 +106,11 @@ class App extends React.Component {
     return (
       <div>
         <Otsikko title={"Anna Palautetta"} />
-        <button onClick={addToStats("goodCounter")}>Hyvä</button>
-        <button onClick={addToStats("neutralCounter")}>Neutraali</button>
-        <button onClick={addToStats("badCounter")}>Huono</button>
-        <Otsikko title={"Statistiikka"} />
-        <div>
-          <p>Hyvä: {this.state.stats['goodCounter']}</p>
-          <p>Neutraali: {this.state.stats['neutralCounter']}</p>
-          <p>Huono: {this.state.stats['badCounter']}</p>
-          <p>Keskiarvo: {this.state.stats['average'].toFixed(1)}</p>
-          <p>Positiivisia: {this.state.stats['positive'].toFixed(1)}%</p>
-        </div>
+        <Button handler={addToStats} handlerKey={"goodCounter"} name={"Hyvä"} />
+        <Button handler={addToStats} handlerKey={"neutralCounter"} name={"Neutraali"} />
+        <Button handler={addToStats} handlerKey={"badCounter"} name={"Huono"} />
+
+        <Statistics stats={this.state.stats} />
       </div>
     )
   }
