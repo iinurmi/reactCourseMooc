@@ -45,20 +45,6 @@ const Statistic = ({name, value}) => {
   )
 }
 
-/*const FeedBackButtons = (props) => {
-  const feedBackButtons = props.buttons.map((button) =>
-    <FeedBackButton value={button.value}
-              title={button.title}  />
-  );
-  return (
-    <div>
-      {feedBackButtons}
-    </div>
-  );
-}*/
-
-
-
 class App extends React.Component {
   constructor(props) {
     super(props)
@@ -76,7 +62,7 @@ class App extends React.Component {
 
 
   }
-  //totalCount = () => this.state.stats.goodCounter + this.state.stats.badCounter + this.state.stats.neutralCounter;
+
   calculateAverage = () => {
     let totalValue =  this.state.stats.goodCounter - this.state.stats.badCounter;
     let totalCount = this.state.stats.totalCount;
