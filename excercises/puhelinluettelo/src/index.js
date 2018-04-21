@@ -1,13 +1,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom'
+import FilteredList from './components/FilteredList'
+import AddPersonComponent from './components/AddPersonComponent'
+import FilterComponent from './components/FilterComponent'
 
-const ListElement = ( {person} ) => {
-  return (
-    <div>
-      <p> {person.name} {person.phone} </p>
-    </div>
-  )
-}
 
 class App extends React.Component {
   constructor(props) {
@@ -20,18 +16,14 @@ class App extends React.Component {
       newPhone:'',
       filter: ''
     }
+     this.handleChange = this.handleChange.bind(this);
   }
-  handleNameChange = (event) => {
-    console.log(event.target.value)
-    this.setState({ newName: event.target.value})
-  }
-  handleFilterChange = (event) => {
-    console.log(event.target.value)
-    this.setState({ filter: event.target.value})
-  }
-  handlePhoneChange = (event) => {
-    console.log(event.target.value)
-    this.setState({ newPhone: event.target.value})
+
+
+  handleChange = (event) => {
+    console.log(event.target.value);
+    console.log(event.target.name);
+    this.setState({[event.target.name]: event.target.value})
   }
   containsItem = (items, property, value) => {
     return items.some(item => item[property] === value);
@@ -51,36 +43,19 @@ class App extends React.Component {
 
 
   render() {
-    const filteredPersons =
-        this.state.filter === '' ?
-          this.state.persons :
-          this.state.persons.filter(person => person.name.toLowerCase().indexOf(this.state.filter.toLowerCase()) !== -1);
+
     return (
       <div>
         <h2>Puhelinluettelo</h2>
-        <form>
-          <div>
-            rajaa näytettäviä: <input onChange={this.handleFilterChange} value={this.state.filter} />
-          </div>
-        </form>
+        <FilterComponent handlechange={this.handleChange} filter={this.state.filter}  />
+
         <h2>Lisää uusi</h2>
-        <form onSubmit={this.addPerson}>
-          <div>
-            nimi: <input onChange={this.handleNameChange} value={this.state.newName} />
-          </div>
-          <div>
-            numero: <input onChange={this.handlePhoneChange} value={this.state.newPhone} />
-          </div>
-          <div>
-            <button type="submit">lisää</button>
-          </div>
-        </form>
+        <AddPersonComponent
+          handleSubmit={this.addPerson} handleChange={this.handleChange}
+          name={this.state.newName} phone={this.state.newPhone} />
+
         <h2>Numerot</h2>
-        <div>
-          {filteredPersons.map(person =>
-            <ListElement key={person.name} person={person} />
-          )}
-        </div>
+        <FilteredList filter={this.state.filter} elements={this.state.persons} filterBy={"name"} />
 
       </div>
     )
